@@ -47,6 +47,7 @@ namespace SeaBattle
             Set_cursor(27, 9);
             Console.WriteLine("Ваш выбор:");
         }
+
         public void Input()
         {
             Console.Clear();
@@ -76,7 +77,21 @@ namespace SeaBattle
             Console.WriteLine("Логин");
             Set_cursor(38, 6);
             Console.WriteLine("Пароль");
+            Set_cursor(47, 37);
+            Console.WriteLine("Примечание");
+            Set_cursor(1, 38);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            Set_cursor(1, 42);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            for (int i = 0; i < 4; i++)
+            {
+                Set_cursor(0, 39 + i);
+                Console.WriteLine("|");
+                Set_cursor(104, 39 + i);
+                Console.WriteLine("|");
+            }
         }
+
         public void Registration()
         {
             Console.Clear();
@@ -108,7 +123,21 @@ namespace SeaBattle
             Console.WriteLine("Логин");
             Set_cursor(30, 9);
             Console.WriteLine("Пароль");
+            Set_cursor(47, 37);
+            Console.WriteLine("Примечание");
+            Set_cursor(1, 38);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            Set_cursor(1, 42);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            for (int i = 0; i < 4; i++)
+            {
+                Set_cursor(0, 39 + i);
+                Console.WriteLine("|");
+                Set_cursor(104, 39 + i);
+                Console.WriteLine("|");
+            }
         }
+
         public void AccountMenu(string nick)
         {
             Console.Clear();
@@ -127,6 +156,7 @@ namespace SeaBattle
             Set_cursor(38, 10);
             Console.WriteLine("Ваш выбор: ");
         }
+
         public void GamePlatform()
         {
             Console.Clear();
@@ -226,12 +256,94 @@ namespace SeaBattle
                 x += 60;
                 count++;
             }
-            Set_cursor(43, 26);
+            Set_cursor(2, 2);
+            Console.WriteLine("___________________");
+            Set_cursor(63, 1);
+            Console.WriteLine("Компьютер");
+            Set_cursor(63, 2);
+            Console.WriteLine("___________________");
+            Set_cursor(43, 27);
             Console.WriteLine("Расстановка кораблей");
-            Set_cursor(63, 27);
+            Set_cursor(2, 28);
+            Console.WriteLine("Введите размер корабля:");
+            Set_cursor(2, 29);
+            Console.WriteLine("Введите координату: ");
+            Set_cursor(63, 28);
             Console.WriteLine("Готов!");
-            Console.ReadLine();
+            Set_cursor(47, 37);
+            Console.WriteLine("Примечание");
+            Set_cursor(1, 38);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            Set_cursor(1, 42);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            for (int i = 0; i < 4; i++)
+            {
+                Set_cursor(0, 39 + i);
+                Console.WriteLine("|");
+                Set_cursor(104, 39 + i);
+                Console.WriteLine("|");
+            }
         }
+
+        public void Fight()
+        {
+            Set_cursor(43, 27);
+            Console.WriteLine("                    ");
+            Set_cursor(47, 27);
+            Console.WriteLine("Ход сражения");
+            Set_cursor(2, 28);
+            Console.WriteLine("Ваш выстрел:");
+            Set_cursor(63, 28);
+            Console.WriteLine("Выстрел компьютера:");
+        }
+
+        public void InstallationDeck(int letter, int number)
+        {
+            Set_cursor(letter, number);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine("   ");
+            Set_cursor(letter, number + 1);
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.WriteLine("   ");
+            Console.BackgroundColor = ConsoleColor.Cyan;
+        }
+
+        public void WriteWarningOrError(string text, string typeOfNotice)
+        {
+            if (typeOfNotice == "Error")
+            {
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            else if (typeOfNotice == "Warning")
+            {
+                Console.BackgroundColor = ConsoleColor.DarkGreen;
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            Console.WriteLine(text);
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+
+        public void InstallShot(int letter, int number, string result)
+        {
+            if (result == "Попал")
+            {
+                Set_cursor(letter, number);
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine("   ");
+                Set_cursor(letter, number + 1);
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine("   ");
+            }
+            else if (result == "Мимо")
+            {
+                Set_cursor(letter, number);
+                Console.WriteLine("XXX");
+            }
+            Console.BackgroundColor = ConsoleColor.Cyan;
+        }
+
         public void Set_cursor(int x, int y)
         {
             Console.SetCursorPosition(x, y);

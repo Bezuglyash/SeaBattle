@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 
 namespace SeaBattle
 {
@@ -48,12 +47,6 @@ namespace SeaBattle
             }
             var gameSpace = new GameSpace();
             gameSpace.Get_start(choice);
-            /**int key = 1;
-            using (var context = new DatabaseContext())
-            {
-                var data = context.DataUsers.Find(key);
-                Console.WriteLine($"id: {data.Users_Id}, Имя: {data.Name}");
-            }*/
             Console.ReadLine();
         }
     }

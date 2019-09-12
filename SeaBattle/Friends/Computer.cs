@@ -27,13 +27,13 @@ namespace SeaBattle
             computerMap = new List<string>
             {
                 "А1", "Б1", "В1", "Г1", "Д1", "Е1", "Ж1", "З1", "И1", "К1",
-                "А2", "Б2", "В2", "Г2", "Д2", "Е2", "Ж2", "32", "И2", "К2",
+                "А2", "Б2", "В2", "Г2", "Д2", "Е2", "Ж2", "З2", "И2", "К2",
                 "А3", "Б3", "В3", "Г3", "Д3", "Е3", "Ж3", "З3", "И3", "К3",
-                "А4", "Б4", "В4", "Г4", "Д4", "Е4", "Ж4", "34", "И4", "К4",
+                "А4", "Б4", "В4", "Г4", "Д4", "Е4", "Ж4", "З4", "И4", "К4",
                 "А5", "Б5", "В5", "Г5", "Д5", "Е5", "Ж5", "З5", "И5", "К5",
-                "А6", "Б6", "В6", "Г6", "Д6", "Е6", "Ж6", "36", "И6", "К6",
+                "А6", "Б6", "В6", "Г6", "Д6", "Е6", "Ж6", "З6", "И6", "К6",
                 "А7", "Б7", "В7", "Г7", "Д7", "Е7", "Ж7", "З7", "И7", "К7",
-                "А8", "Б8", "В8", "Г8", "Д8", "Е8", "Ж8", "38", "И8", "К8",
+                "А8", "Б8", "В8", "Г8", "Д8", "Е8", "Ж8", "З8", "И8", "К8",
                 "А9", "Б9", "В9", "Г9", "Д9", "Е9", "Ж9", "З9", "И9", "К9",
                 "А10", "Б10", "В10", "Г10", "Д10", "Е10", "Ж10", "З10", "И10", "К10"
             };
@@ -61,8 +61,61 @@ namespace SeaBattle
             coordinatesKillShips = new List<int>();
             computerMessages = new Hashtable
             {
-                { "Я выиграл!", "Поражение" }
+                { "Я победил!!!", "Проиграл" },
+                { "Да-да, я лучший!", "Проиграл" },
+                { "Это было легко!", "Проиграл" },
+                { "Иди учись, салага!", "Проиграл" },
+                { "Историческая победа!", "Проиграл" },
+                { "Ха, мимо!", "Мимо" },
+                { "Не попал!", "Мимо" },
+                { "Так меня не одолеть!", "Мимо" },
+                { "А теперь учись!", "Мимо" },
+                { "Такому я только рад!", "Мимо" },
+                { "Хм... Попал!", "Попал" },
+                { "Ранил!", "Попал" },
+                { "Повредил одну палубу!", "Попал" },
+                { "Ай, ранил!", "Попал" },
+                { "Попал!", "Попал" },
+                { "Флот терпит потери...", "Убил" },
+                { "Убил!", "Убил" },
+                { "Минус корабль...", "Убил" },
+                { "Корабль повержен!", "Убил" },
+                { "Корабль потанул!", "Убил" },
+                { "С победой!", "Победил" },
+                { "Это только один бой!", "Победил" },
+                { "Ещё увидимся...", "Победил" },
+                { "Я был близок...", "Победил" },
+                { "Буду ждать реванша!", "Победил" }
             };
+        }
+
+        public Computer (Computer computerCopy)
+        {
+            coordinatesOfShips = computerCopy.coordinatesOfShips;
+            computerMap = computerCopy.computerMap;
+            numberCoordinates = computerCopy.numberCoordinates;
+            randomize = computerCopy.randomize;
+            numberCoordinate = computerCopy.numberCoordinate;
+            countShips = computerCopy.countShips;
+            direction = computerCopy.direction;
+            completeDestructionOfTheShip = computerCopy.completeDestructionOfTheShip;
+            numberCoordinateFirstShot = computerCopy.numberCoordinateFirstShot;
+            isHitTheTarget = computerCopy.isHitTheTarget;
+            countShotForOneShip = computerCopy.countShotForOneShip;
+            coordinatesKillShips = computerCopy.coordinatesKillShips;
+            computerMessages = computerCopy.computerMessages;
+        }
+
+        public string AnswerToMiniGame()
+        {
+            string[] variantsInMiniGame = new string[]
+            {
+                "Камень",
+                "Ножницы",
+                "Бумага"
+            };
+            int index = randomize.Next(0, 3);
+            return variantsInMiniGame[index];
         }
 
         public void AlignmentOfTheShips()
@@ -538,7 +591,7 @@ namespace SeaBattle
             }
         }
 
-        public string MakeShot(out int numberCoordinateShot)
+        public string MakeShot(out int numberCoordinateShot, out int time)
         {
             if (completeDestructionOfTheShip == "off")
             {
@@ -550,13 +603,14 @@ namespace SeaBattle
                         direction = 0;
                         numberDirection = new List<int> { 1, 2, 3, 4 };
                         numberCoordinateShot = numberCoordinate;
+                        time = 5000;
                         return computerMap[numberCoordinate];
                     }
                 }
             }
             else
             {
-                numberCoordinateShot =  ShootToKill();
+                numberCoordinateShot =  ShootToKill(out time);
                 return computerMap[numberCoordinate];
             }
         }
@@ -572,8 +626,23 @@ namespace SeaBattle
                 index = oneShip.IndexOf(coordinate);
                 if (index != -1)
                 {
-                    lengthShip = oneShip.Length;
-                    break;
+                    if (coordinate.Length == 2 && coordinate[1] == '1' && oneShip.Length > index + 2)
+                    {
+                        if (oneShip[index + 2] != '0')
+                        {
+                            lengthShip = oneShip.Length;
+                            break;
+                        }
+                        else
+                        {
+                            index = -1;
+                        }
+                    }
+                    else
+                    {
+                        lengthShip = oneShip.Length;
+                        break;
+                    }
                 }
                 count++;
             }
@@ -631,7 +700,7 @@ namespace SeaBattle
                 completeDestructionOfTheShip = "off";
                 computerMap[numberCoordinate] = "SB";
                 coordinatesKillShips.Add(numberCoordinate);
-                stopKill();
+                StopKill();
                 for (int i = 0; i < coordinatesKillShips.Count; i++)
                 {
                     coordinatesKillShips.RemoveAt(i);
@@ -644,30 +713,30 @@ namespace SeaBattle
                 if (countShotForOneShip == 0)
                 {
                     numberCoordinateFirstShot = numberCoordinate;
-                    coordinatesKillShips.Add(numberCoordinate);
-                    if (direction == -10 || direction == 10)
-                    {
-                        for(int i = 0; i < numberDirection.Count; i++)
-                        {
-                            if(numberDirection[i] == 4 || numberDirection[i] == 2)
-                            {
-                                numberDirection.RemoveAt(i);
-                            }
-                        }
-                    }
-                    else if (direction == -1 || direction == 1)
-                    {
-                        for (int i = 0; i < numberDirection.Count; i++)
-                        {
-                            if (numberDirection[i] == 1 || numberDirection[i] == 3)
-                            {
-                                numberDirection.RemoveAt(i);
-                            }
-                        }
-                    }
-                    computerMap[numberCoordinate] = "SB";
-                    countShotForOneShip++;
                 }
+                coordinatesKillShips.Add(numberCoordinate);
+                if (direction == -10 || direction == 10)
+                {
+                    for (int i = 0; i < numberDirection.Count; i++)
+                    {
+                        if (numberDirection[i] == 4 || numberDirection[i] == 2)
+                        {
+                            numberDirection.RemoveAt(i);
+                        }
+                    }
+                }
+                else if (direction == -1 || direction == 1)
+                {
+                    for (int i = 0; i < numberDirection.Count; i++)
+                    {
+                        if (numberDirection[i] == 1 || numberDirection[i] == 3)
+                        {
+                            numberDirection.RemoveAt(i);
+                        }
+                    }
+                }
+                computerMap[numberCoordinate] = "SB";
+                countShotForOneShip++;
             }
             else
             {
@@ -677,7 +746,7 @@ namespace SeaBattle
             }
         }
 
-        public int ShootToKill()
+        public int ShootToKill(out int time)
         {
             int lastDirection = direction;
             int answerRandom = 0;
@@ -754,10 +823,11 @@ namespace SeaBattle
                     numberCoordinate = numberCoordinateFirstShot;
                 }
             }
+            time = 1500;
             return numberCoordinate;
         }
 
-        public void stopKill()
+        public void StopKill()
         {
             foreach(var oneCoordinateShip in coordinatesKillShips)
             {
@@ -829,6 +899,21 @@ namespace SeaBattle
                     computerMap[oneCoordinateShip - 11] = "SB";
                 }
             }
+        }
+
+        public string getMessage(string resultShot)
+        {
+            List<string> messagesThematics = new List<string> ();
+            ICollection keys = computerMessages.Keys;
+            foreach (string key in keys)
+            {
+                if (computerMessages[key].ToString() == resultShot)
+                {
+                    messagesThematics.Add(key);
+                }
+            }
+            int indexOnList = randomize.Next(0, messagesThematics.Count);
+            return messagesThematics[indexOnList];
         }
     }
 }

@@ -20,15 +20,15 @@ namespace SeaBattle
             playerMap = new List<string>
             {
                 "А1", "Б1", "В1", "Г1", "Д1", "Е1", "Ж1", "З1", "И1", "К1",
-                "А2", "Б2", "В2", "Г2", "Д2", "Е2", "Ж2", "32", "И2", "К2",
+                "А2", "Б2", "В2", "Г2", "Д2", "Е2", "Ж2", "З2", "И2", "К2",
                 "А3", "Б3", "В3", "Г3", "Д3", "Е3", "Ж3", "З3", "И3", "К3",
-                "А4", "Б4", "В4", "Г4", "Д4", "Е4", "Ж4", "34", "И4", "К4",
+                "А4", "Б4", "В4", "Г4", "Д4", "Е4", "Ж4", "З4", "И4", "К4",
                 "А5", "Б5", "В5", "Г5", "Д5", "Е5", "Ж5", "З5", "И5", "К5",
-                "А6", "Б6", "В6", "Г6", "Д6", "Е6", "Ж6", "36", "И6", "К6",
+                "А6", "Б6", "В6", "Г6", "Д6", "Е6", "Ж6", "З6", "И6", "К6",
                 "А7", "Б7", "В7", "Г7", "Д7", "Е7", "Ж7", "З7", "И7", "К7",
-                "А8", "Б8", "В8", "Г8", "Д8", "Е8", "Ж8", "38", "И8", "К8",
+                "А8", "Б8", "В8", "Г8", "Д8", "Е8", "Ж8", "З8", "И8", "К8",
                 "А9", "Б9", "В9", "Г9", "Д9", "Е9", "Ж9", "З9", "И9", "К9",
-                "А10", "Б10", "В10", "Г10", "Д10", "Е10", "Ж10", "З10", "И10", "К10"
+                "А10", "Б10", "В10", "Г10", "Д10", "Е10", "Ж10", "310", "И10", "К10"
             };
             playerNumberCoordinates = new List<int>
             {
@@ -48,6 +48,39 @@ namespace SeaBattle
             playerNumberCoordinate = -1;
             directionPlayerShip = 0;
             noticeText = "";
+        }
+
+        public Player (Player playerCopy)
+        {
+            playerInterface = playerCopy.playerInterface;
+            playerMap = playerCopy.playerMap;
+            playerNumberCoordinates = playerCopy.playerNumberCoordinates;
+            coordinatesOfShipsPlayer = playerCopy.coordinatesOfShipsPlayer;
+            countPlayerShips = playerCopy.countPlayerShips;
+            playerNumberCoordinate = playerCopy.playerNumberCoordinate;
+            directionPlayerShip = playerCopy.directionPlayerShip;
+            noticeText = playerCopy.noticeText;
+        }
+
+        public string AnswerToMiniGame()
+        {
+            string variantInMiniGame = "";
+            while (variantInMiniGame != "Камень" && variantInMiniGame != "Ножницы" && variantInMiniGame != "Бумага")
+            {
+                for (int i = 0; i < variantInMiniGame.Length; i++)
+                {
+                    if (i == 0)
+                    {
+                        playerInterface.Set_cursor(1, 40);
+                        playerInterface.WriteWarningOrError("Ошибка! Неправильный ввод! Попробуйте ещё раз!", "Error");
+                    }
+                    playerInterface.Set_cursor(12 + i, 7);
+                    Console.WriteLine(" ");
+                }
+                playerInterface.Set_cursor(12, 7);
+                variantInMiniGame = Console.ReadLine();
+            }
+            return variantInMiniGame;
         }
 
         public void AlignmentOfTheShips()
@@ -458,7 +491,7 @@ namespace SeaBattle
                 playerInterface.Set_cursor(1, 41);
                 Console.WriteLine("                                                                                         ");
                 playerInterface.Set_cursor(1, 41);
-                noticeText = "1 - вверх, 2 - вправо, 3 - назад, 4 - влево";
+                noticeText = "1 - вверх, 2 - вправо, 3 - вниз, 4 - влево";
                 playerInterface.WriteWarningOrError(noticeText, "Warning");
                 do
                 {
@@ -810,7 +843,7 @@ namespace SeaBattle
             }
         }
 
-        public string MakeShot(out int numberCoordinateShot)
+        public string MakeShot(out int numberCoordinateShot, out int time)
         {
             string coordinateShotPlayer;
             int indexThisCoordinate;
@@ -843,6 +876,12 @@ namespace SeaBattle
             } while (indexThisCoordinate == -1);
             numberCoordinateShot = indexThisCoordinate;
             playerMap[indexThisCoordinate] = "SB";
+            for (int i = 0; i < noticeText.Length; i++)
+            {
+                playerInterface.Set_cursor(1 + i, 40);
+                Console.WriteLine(" ");
+            }
+            time = 0;
             return coordinateShotPlayer;
         }
 

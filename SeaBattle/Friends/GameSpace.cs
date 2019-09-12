@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Media;
+using System.Reflection;
+using System.Threading;
 
 namespace SeaBattle
 {
@@ -14,6 +18,8 @@ namespace SeaBattle
         private ConsoleInterface WorkConsole;
         private Logic logic;
         private string textMessage;
+        private SoundPlayer shotSound;
+        private SoundPlayer winSound;
 
         public GameSpace()
         {
@@ -21,6 +27,9 @@ namespace SeaBattle
             Password = "";
             WorkConsole = new ConsoleInterface();
             logic = new Logic();
+            textMessage = "";
+            shotSound = new SoundPlayer(Properties.Resources.Shot);
+            winSound = new SoundPlayer(Properties.Resources.Win);
         }
 
         public void Get_start(int number_operation)
@@ -241,7 +250,7 @@ namespace SeaBattle
                         Console.Clear();
                         WorkConsole.Set_cursor(45, 19);
                         Console.WriteLine("...Ожидание...");
-                        logic.SavingNewData(Nick, Login, Password);
+                        logic.SavingNewAccountData(Nick, Login, Password);
                         GetRankPlayer();
                         GetNumberGamesPlayer();
                         GetNumberWinsPlayer();
@@ -267,10 +276,11 @@ namespace SeaBattle
                 change = Console.ReadLine();
                 if (change != "1" && change != "2" && change != "3")
                 {
-                    WorkConsole.Set_cursor(38, 11);
-                    Console.WriteLine("Ошибка ввода! Для повторения нажмите Enter");
+                    WorkConsole.Set_cursor(1, 40);
+                    WorkConsole.WriteWarningOrError("Ошибка ввода! Для повторения нажмите Enter", "Error");
+                    WorkConsole.Set_cursor(1, 41);
                     Console.ReadLine();
-                    WorkConsole.Set_cursor(38, 11);
+                    WorkConsole.Set_cursor(1, 40);
                     Console.WriteLine("                                          ");                   
                     for (int i = 0; i < change.Length; i++)
                     {
@@ -304,31 +314,58 @@ namespace SeaBattle
 
         public void Game()
         {
+            Player player = new Player();
+            Computer computer = new Computer();
+            string nameProgress = MiniGame(player, computer);
             WorkConsole.GamePlatform();
             WorkConsole.Set_cursor(2, 1);
             Console.WriteLine(Nick);
-            Computer computer = new Computer();
             computer.AlignmentOfTheShips();
-            Player player = new Player();
             player.AlignmentOfTheShips();
             WorkConsole.Fight();
             string shot = "";
-            string nameProgress = "Игрок";
             while (true)
             {
                 int coordinate;
+                int timeReflection;
                 int resultOfShot;
                 if (nameProgress == "Компьютер")
                 {
-                    shot = computer.MakeShot(out coordinate);
+                    shot = computer.MakeShot(out coordinate, out timeReflection);
+                    WorkConsole.Set_cursor(1, 40);
+                    Console.WriteLine("Ожидание компьютера...");
+                    WorkConsole.Set_cursor(83, 31);
+                    Thread.Sleep(timeReflection);
+                    shotSound.Play();
                     WorkConsole.Set_cursor(83, 28);
-                    Console.WriteLine("     ");
+                    Console.WriteLine("   ");
                     WorkConsole.Set_cursor(83, 28);
                     Console.WriteLine(shot);
+                    WorkConsole.Set_cursor(1, 40);
+                    Console.WriteLine("                      ");
                     player.CheckTheShips(shot, out resultOfShot);
                     if (resultOfShot == 0 || resultOfShot == 1 || resultOfShot == 2)
                     {
                         WorkConsole.InstallShot(coordinate % 10 * 4 + 3, 2 * (coordinate / 10) + 6, "Попал");
+                        if(resultOfShot == 0)
+                        {
+                            WorkConsole.Set_cursor(63, 29);
+                            Console.WriteLine("Говорит компьютер:");
+                            for (int i = 0; i < 21; i++)
+                            {
+                                WorkConsole.Set_cursor(82 + i, 29);
+                                Console.WriteLine(" ");
+                            }
+                            WorkConsole.Set_cursor(82, 29);
+                            textMessage = computer.getMessage("Проиграл");
+                            Console.WriteLine(textMessage);
+                            WorkConsole.LoseGame();
+                            WorkConsole.Set_cursor(1, 40);
+                            Console.WriteLine("Для продолжения нажмите Enter");
+                            WorkConsole.Set_cursor(31, 40);
+                            Console.ReadLine();
+                            break;
+                        }
                     }
                     else
                     {
@@ -344,19 +381,50 @@ namespace SeaBattle
                 {
                     WorkConsole.Set_cursor(15, 28);
                     Console.WriteLine("     ");
-                    shot = player.MakeShot(out coordinate);
+                    shot = player.MakeShot(out coordinate, out timeReflection);
+                    shotSound.Play();
                     computer.CheckTheShips(shot, out resultOfShot);
+                    WorkConsole.Set_cursor(63, 29);
+                    Console.WriteLine("Говорит компьютер:");
+                    for (int i =0; i < 21; i++)
+                    {
+                        WorkConsole.Set_cursor(82 + i, 29);
+                        Console.WriteLine(" ");
+                    }
+                    WorkConsole.Set_cursor(82, 29);
                     if (resultOfShot == 1 || resultOfShot == 2 || resultOfShot == 3)
                     {
+                        if (resultOfShot == 1)
+                        {
+                            textMessage = computer.getMessage("Попал");
+                            Console.WriteLine(textMessage);
+                        }
+                        else if (resultOfShot == 2)
+                        {
+                            textMessage = computer.getMessage("Убил");
+                            Console.WriteLine(textMessage);
+                        }
+                        else
+                        {
+                            textMessage = computer.getMessage("Победил");
+                            Console.WriteLine(textMessage);
+                            Thread threadWinGame = new Thread(new ThreadStart(WorkConsole.WinGame));
+                            threadWinGame.Start();
+                            winSound.Play();
+                            WorkConsole.Set_cursor(1, 40);
+                            Console.WriteLine("Для продолжения нажмите Enter");
+                            WorkConsole.Set_cursor(31, 40);
+                            Console.ReadLine();
+                            break;
+                        }
                         WorkConsole.InstallShot((coordinate % 10 * 4 + 3) + 60, 2 * (coordinate / 10) + 6, "Попал");
                     }
                     else
                     {
-                        WorkConsole.InstallShot((coordinate % 10 * 4 + 3) + 60, 2 * (coordinate / 10) + 6, "Мимо");
-                    }
-                    if (resultOfShot == 0)
-                    {
+                        textMessage = computer.getMessage("Мимо");
+                        Console.WriteLine(textMessage);
                         nameProgress = "Компьютер";
+                        WorkConsole.InstallShot((coordinate % 10 * 4 + 3) + 60, 2 * (coordinate / 10) + 6, "Мимо");
                     }
                 }
             }
@@ -371,6 +439,68 @@ namespace SeaBattle
         public bool Exit()
         {
             return true;
+        }
+
+        public string MiniGame(Player playerMiniGame, Computer computerMiniGame)
+        {
+            do
+            {
+                WorkConsole.InstructionsForTheMiniGame();
+                Console.ReadLine();
+                WorkConsole.MiniGamePlatform();
+                string answerPlayer = playerMiniGame.AnswerToMiniGame();
+                string answerComputer = computerMiniGame.AnswerToMiniGame();
+                WorkConsole.Set_cursor(87, 7);
+                Console.WriteLine(answerComputer);
+                WorkConsole.Set_cursor(1, 40);
+                if (answerPlayer == "Камень")
+                {
+                    if (answerComputer == "Ножницы")
+                    {
+                        WorkConsole.WriteWarningOrError("По результату игры " + Nick + " ходит первым!", "Warning");
+                        Thread.Sleep(1400);
+                        return "Игрок";
+                    }
+                    else if (answerComputer == "Бумага")
+                    {
+                        WorkConsole.WriteWarningOrError("По результату игры Computer ходит первым!", "Warning");
+                        Thread.Sleep(1400);
+                        return "Компьютер";
+                    }
+                }
+                else if (answerPlayer == "Ножницы")
+                {
+                    if (answerComputer == "Бумага")
+                    {
+                        WorkConsole.WriteWarningOrError("По результату игры " + Nick + " ходит первым!", "Warning");
+                        Thread.Sleep(1400);
+                        return "Игрок";
+                    }
+                    else if (answerComputer == "Камень")
+                    {
+                        WorkConsole.WriteWarningOrError("По результату игры Computer ходит первым!", "Warning");
+                        Thread.Sleep(1400);
+                        return "Компьютер";
+                    }
+                }
+                else
+                {
+                    if (answerComputer == "Камень")
+                    {
+                        WorkConsole.WriteWarningOrError("По результату игры " + Nick + " ходит первым!", "Warning");
+                        Thread.Sleep(1400);
+                        return "Игрок";
+                    }
+                    else if (answerComputer == "Ножницы")
+                    {
+                        WorkConsole.WriteWarningOrError("По результату игры Computer ходит первым!", "Warning");
+                        Thread.Sleep(1400);
+                        return "Компьютер";
+                    }
+                }
+                WorkConsole.WriteWarningOrError("Ничья - ожидайте повторения!", "Error");
+                Thread.Sleep(1400);
+            } while (true);
         }
 
         public void GetNickPlayer()

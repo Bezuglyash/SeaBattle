@@ -27,7 +27,10 @@ namespace SeaBattle
                     }
                     else
                     {
-                        Console.WriteLine("Только цифры от 1 до 3!");
+                        WorkConsole.Set_cursor(1, 40);
+                        Console.WriteLine("                                        ");
+                        WorkConsole.Set_cursor(1, 40);
+                        WorkConsole.WriteWarningOrError("Только цифры от 1 до 3!", "Error");
                         for (int i = 0; i < input.Length; i++)
                         {
                             WorkConsole.Set_cursor(38 + i, 9);
@@ -37,7 +40,8 @@ namespace SeaBattle
                 }
                 else
                 {
-                    Console.WriteLine("Неправильный формат ввода!");
+                    WorkConsole.Set_cursor(1, 40);
+                    WorkConsole.WriteWarningOrError("Неправильный формат ввода!", "Error");
                     for (int i = 0; i < input.Length; i++)
                     {
                         WorkConsole.Set_cursor(38 + i, 9);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace SeaBattle
 {
@@ -46,6 +47,19 @@ namespace SeaBattle
             Console.WriteLine("3 - Инструкция");
             Set_cursor(27, 9);
             Console.WriteLine("Ваш выбор:");
+            Set_cursor(47, 37);
+            Console.WriteLine("Примечание");
+            Set_cursor(1, 38);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            Set_cursor(1, 42);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            for (int i = 0; i < 4; i++)
+            {
+                Set_cursor(0, 39 + i);
+                Console.WriteLine("|");
+                Set_cursor(104, 39 + i);
+                Console.WriteLine("|");
+            }
         }
 
         public void Input()
@@ -155,6 +169,19 @@ namespace SeaBattle
             Console.WriteLine("_____________________________");
             Set_cursor(38, 10);
             Console.WriteLine("Ваш выбор: ");
+            Set_cursor(47, 37);
+            Console.WriteLine("Примечание");
+            Set_cursor(1, 38);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            Set_cursor(1, 42);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            for (int i = 0; i < 4; i++)
+            {
+                Set_cursor(0, 39 + i);
+                Console.WriteLine("|");
+                Set_cursor(104, 39 + i);
+                Console.WriteLine("|");
+            }
         }
 
         public void GamePlatform()
@@ -285,6 +312,78 @@ namespace SeaBattle
             }
         }
 
+        public void InstructionsForTheMiniGame()
+        {
+            Console.Clear();
+            Set_cursor(48, 0);
+            Console.WriteLine("Мини-игра");
+            Set_cursor(1, 1);
+            Console.WriteLine("Результат мини-игры решает, чей ход будет первым. Сама игра называется \"Цу-е-фа\".");
+            Set_cursor(1, 2);
+            Console.WriteLine("Напоминаем правила:");
+            Set_cursor(2, 3);
+            Console.WriteLine("1) Похоже на игру в реальности, но здесь нужно просто написать один из 3 вариантов хода.");
+            Set_cursor(1, 4);
+            Console.WriteLine("Варианты: камень, ножницы, бумага.");
+            Set_cursor(2, 5);
+            Console.WriteLine("2) Компьютер НЕ ВИДИТ Вашего хода, а так же записывает свой вариант.");
+            Set_cursor(1, 6);
+            Console.WriteLine("По сути, это аналог записок, которые потом раскрываются, и выводится результат.");
+            Set_cursor(47, 37);
+            Console.WriteLine("Примечание");
+            Set_cursor(1, 38);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            Set_cursor(1, 42);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            for (int i = 0; i < 4; i++)
+            {
+                Set_cursor(0, 39 + i);
+                Console.WriteLine("|");
+                Set_cursor(104, 39 + i);
+                Console.WriteLine("|");
+            }
+            Set_cursor(1, 40);
+            WriteWarningOrError("Если ознакомились, нажмите Enter", "Warning");
+            Set_cursor(1, 41);
+        }
+
+        public void MiniGamePlatform()
+        {
+            Console.Clear();
+            Set_cursor(48, 0);
+            Console.WriteLine("Мини-игра");
+            Set_cursor(1, 7);
+            Console.WriteLine("Ваш ответ:");
+            Set_cursor(69, 7);
+            Console.WriteLine("Ответ компьютера:");
+            Set_cursor(47, 37);
+            Console.WriteLine("Примечание");
+            Set_cursor(1, 38);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            Set_cursor(1, 42);
+            Console.WriteLine("_______________________________________________________________________________________________________");
+            for (int i = 0; i < 4; i++)
+            {
+                Set_cursor(0, 39 + i);
+                Console.WriteLine("|");
+                Set_cursor(104, 39 + i);
+                Console.WriteLine("|");
+            }
+            Set_cursor(51, 1);
+            Thread.Sleep(500);
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("ЦУ");
+            Set_cursor(51, 3);
+            Thread.Sleep(500);
+            Console.BackgroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Е");
+            Set_cursor(51, 5);
+            Thread.Sleep(500);
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.WriteLine("ФА");
+            Console.BackgroundColor = ConsoleColor.Cyan;
+        }
+
         public void Fight()
         {
             Set_cursor(43, 27);
@@ -295,6 +394,51 @@ namespace SeaBattle
             Console.WriteLine("Ваш выстрел:");
             Set_cursor(63, 28);
             Console.WriteLine("Выстрел компьютера:");
+        }
+
+        public void WinGame()
+        {
+            Set_cursor(43, 27);
+            Console.WriteLine("                       ");
+            Set_cursor(2, 28);
+            Console.WriteLine("                       ");
+            Set_cursor(63, 28);
+            Console.WriteLine("                       ");
+            Set_cursor(45, 19);
+            Console.WriteLine("ВЫ ПОБЕДИЛИ!");
+            Console.BackgroundColor = ConsoleColor.DarkGreen;
+            for (int i = 0; i < 103; i++)
+            {
+                Set_cursor(1 + i, 31);
+                Console.WriteLine(" ");
+                Set_cursor(1 + i, 32);
+                Console.WriteLine(" ");
+                Set_cursor(1 + i, 33);
+                Console.WriteLine(" ");
+            }
+            int x = 0;
+            Console.ForegroundColor = ConsoleColor.White;
+            for (int i = 0; i < 11; i++)
+            {
+                Set_cursor(1 + x, 32);
+                Console.WriteLine("ПОБЕДА!!!");
+                Thread.Sleep(2100);
+                Set_cursor(1 + x, 32);
+                Console.WriteLine("         ");
+                x += 9;
+            }
+        }
+
+        public void LoseGame()
+        {
+            Set_cursor(43, 27);
+            Console.WriteLine("                       ");
+            Set_cursor(2, 28);
+            Console.WriteLine("                       ");
+            Set_cursor(63, 28);
+            Console.WriteLine("                       ");
+            Set_cursor(45, 19);
+            Console.WriteLine("ВЫ ПРОИГРАЛИ!");
         }
 
         public void InstallationDeck(int letter, int number)

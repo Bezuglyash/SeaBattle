@@ -7,7 +7,7 @@ namespace SeaBattle
     public class Logic
     {
         private int id;
-        private const string nameDataBase = "SeaBattle.db";
+        private const string NAME_DATA_BASE = "SeaBattle.db";
         private SQLiteConnection dataBase;
         private User user;
         private bool itWasOpen;
@@ -18,7 +18,7 @@ namespace SeaBattle
             try
             {
                 itWasOpen = true;
-                dataBase = new SQLiteConnection(nameDataBase, SQLiteOpenFlags.ReadWrite, true);
+                dataBase = new SQLiteConnection(NAME_DATA_BASE, SQLiteOpenFlags.ReadWrite, true);
             }
             catch (Exception)
             {
@@ -36,7 +36,7 @@ namespace SeaBattle
             }
             else
             {
-                dataBase = new SQLiteConnection(nameDataBase, SQLiteOpenFlags.ReadWrite, true);
+                dataBase = new SQLiteConnection(NAME_DATA_BASE, SQLiteOpenFlags.ReadWrite, true);
                 var users = dataBase.Table<User>();
                 foreach(var userCheck in users)
                 {
@@ -100,11 +100,11 @@ namespace SeaBattle
             }
         }
 
-        public void SavingNewData(string nick, string login, string password)
+        public void SavingNewAccountData(string nick, string login, string password)
         {
             if (itWasOpen == false)
             {
-                dataBase = new SQLiteConnection(nameDataBase, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create, true);
+                dataBase = new SQLiteConnection(NAME_DATA_BASE, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create, true);
                 dataBase.CreateTable<User>();
             }
             user.Login = login;

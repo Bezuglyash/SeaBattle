@@ -23,6 +23,8 @@ namespace SeaBattle
 
         public long NumberOfWins { get; set; }
 
-        public double PercentWins { get; set; }
+        public int PercentWins { get; set; }
+
+        public long NumberDefeatsConsecutive { get; set; }
     }
 }

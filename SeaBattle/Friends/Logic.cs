@@ -27,7 +27,12 @@ namespace SeaBattle
             user = new User();
         }
 
-        public bool Checking_login_and_password(string login, string password, out int checkLoginOrPassword)
+        ~Logic()
+        {
+            dataBase.Dispose();
+        }
+
+        public bool CheckingLoginAndPassword(string login, string password, out int checkLoginOrPassword)
         {
             if (itWasOpen == false)
             {
@@ -67,15 +72,18 @@ namespace SeaBattle
             }
         }
 
-        public bool Checking_scan(string nick, string login, string password, out int numberString)
+        public bool CheckingScan(string nick, string login, string password, out int numberString)
         {
-            var users = dataBase.Table<User>();
-            foreach (var oneUser in users)
+            if (itWasOpen == true)
             {
-                if (oneUser.Login == login)
+                var users = dataBase.Table<User>();
+                foreach (var oneUser in users)
                 {
-                    numberString = 4;
-                    return false;
+                    if (oneUser.Login == login)
+                    {
+                        numberString = 4;
+                        return false;
+                    }
                 }
             }
             if (nick.Length > 12)
@@ -113,7 +121,8 @@ namespace SeaBattle
             user.Rank = "Матрос";
             user.NumberOfGames = 0;
             user.NumberOfWins = 0;
-            user.PercentWins = 0.0;
+            user.PercentWins = 0;
+            user.NumberDefeatsConsecutive = 0;
             id = dataBase.Insert(user);
         }
 
@@ -137,9 +146,67 @@ namespace SeaBattle
             return user.NumberOfWins;
         }
 
-        public double GetPercentOfWins()
+        public int GetPercentOfWins()
         {
             return user.PercentWins;
+        }
+
+        public long GetNumberDefeatsConsecutive()
+        {
+            return user.NumberDefeatsConsecutive;
+        }
+
+        public void SetNewLogin(string login)
+        {
+            user.Login = login;
+            UpdateData();
+        }
+
+        public void SetNewPassword(string password)
+        {
+            user.Password = password;
+            UpdateData();
+        }
+
+        public void SetNewNickname(string nick)
+        {
+            user.Nickname = nick;
+            UpdateData();
+        }
+
+        public void SetNewRank(string rank)
+        {
+            user.Rank = rank;
+        }
+
+        public void SetNewNumberOfGames(long number)
+        {
+            user.NumberOfGames = number;
+        }
+
+        public void SetNewNumberOfWins(long number)
+        {
+            user.NumberOfWins = number;
+        }
+
+        public void SetNewPercentWins(int percent)
+        {
+            user.PercentWins = percent;
+        }
+
+        public void SetNewNumberDefeatsConsecutive(long number)
+        {
+            user.NumberDefeatsConsecutive = number;
+        }
+
+        public void UpdateData()
+        {
+            dataBase.Update(user);
+        }
+
+        public void ExitDataBase()
+        {
+            dataBase.Dispose();
         }
     }
 }

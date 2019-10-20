@@ -20,6 +20,8 @@ namespace SeaBattle
         private int countShotForOneShip;
         private List<int> coordinatesKillShips;
         private Hashtable computerMessages;
+        private int[] countPlayerShipWhichItNotKill;
+        private List<int[]> numbersCoordinatesWhichWarning;
 
         public Computer()
         {
@@ -87,6 +89,39 @@ namespace SeaBattle
                 { "Я был близок...", "Победил" },
                 { "Буду ждать реванша!", "Победил" }
             };
+            countPlayerShipWhichItNotKill = new int[4] { 4, 3, 2, 1 };
+
+            numbersCoordinatesWhichWarning = new List<int[]>
+            {
+                new int [1] {0},
+                new int [1] {9},
+                new int [1] {90},
+                new int [1] {99}
+            };
+            int[] massiveOneForEight = new int[8];
+            for (int i = 1; i < 9; i++)
+            {
+                massiveOneForEight[i - 1] = i;
+            }
+            numbersCoordinatesWhichWarning.Add(massiveOneForEight);
+            int[] massiveNineteenForEightyNine = new int[8];
+            for (int i = 19; i < 99; i += 10)
+            {
+                massiveNineteenForEightyNine[(i - 9) / 10 - 1] = i;
+            }
+            numbersCoordinatesWhichWarning.Add(massiveNineteenForEightyNine);
+            int[] massiveNinetyOneForNinetyEight = new int[8];
+            for (int i = 91; i < 99; i++)
+            {
+                massiveNinetyOneForNinetyEight[i - 91] = i;
+            }
+            numbersCoordinatesWhichWarning.Add(massiveNinetyOneForNinetyEight);
+            int[] massiveTenForEighty = new int[8];
+            for (int i = 10; i < 90; i += 10)
+            {
+                massiveTenForEighty[i / 10 - 1] = i;
+            }
+            numbersCoordinatesWhichWarning.Add(massiveTenForEighty);
         }
 
         public Computer (Computer computerCopy)
@@ -600,11 +635,14 @@ namespace SeaBattle
                     numberCoordinate = randomize.Next(0, computerMap.Count);
                     if (computerMap[numberCoordinate] != "SB")
                     {
-                        direction = 0;
-                        numberDirection = new List<int> { 1, 2, 3, 4 };
-                        numberCoordinateShot = numberCoordinate;
-                        time = 5000;
-                        return computerMap[numberCoordinate];
+                        if (IsThisLogicalMove() == true)
+                        {
+                            direction = 0;
+                            numberDirection = new List<int> { 1, 2, 3, 4 };
+                            numberCoordinateShot = numberCoordinate;
+                            time = 3000;
+                            return computerMap[numberCoordinate];
+                        }
                     }
                 }
             }
@@ -705,6 +743,7 @@ namespace SeaBattle
                 {
                     coordinatesKillShips.RemoveAt(i);
                 }
+                countPlayerShipWhichItNotKill[countShotForOneShip]--;
                 countShotForOneShip = 0;
             }
             else if (result == 2)
@@ -722,6 +761,7 @@ namespace SeaBattle
                         if (numberDirection[i] == 4 || numberDirection[i] == 2)
                         {
                             numberDirection.RemoveAt(i);
+                            i -= 1;
                         }
                     }
                 }
@@ -732,6 +772,7 @@ namespace SeaBattle
                         if (numberDirection[i] == 1 || numberDirection[i] == 3)
                         {
                             numberDirection.RemoveAt(i);
+                            i -= 1;
                         }
                     }
                 }
@@ -827,6 +868,129 @@ namespace SeaBattle
             return numberCoordinate;
         }
 
+        public bool IsThisLogicalMove()
+        {
+            int counter = 0;
+            int saveNumberCoordinate = numberCoordinate;
+            List <int> directions = new List <int> ();
+            if (countPlayerShipWhichItNotKill[0] == 0 && countPlayerShipWhichItNotKill[1] == 0 && countPlayerShipWhichItNotKill[2] == 0)
+            {
+                counter = 3;
+            }
+            else if (countPlayerShipWhichItNotKill[0] == 0 && countPlayerShipWhichItNotKill[1] == 0)
+            {
+                counter = 2;
+            }
+            else if (countPlayerShipWhichItNotKill[0] == 0)
+            {
+                counter = 1;
+            }
+            else
+            {
+                return true;
+            }
+            int numberCoordinatesWhichWarning = GetNumberCoordinatesWhichWarning();
+            if (numberCoordinatesWhichWarning == 9)
+            {
+                if (computerMap[numberCoordinate + 1] == "SB" && computerMap[numberCoordinate - 1] == "SB" && computerMap[numberCoordinate + 10] == "SB" && computerMap[numberCoordinate - 10] == "SB")
+                {
+                    return false;
+                }
+                else
+                {
+                    if (counter == 1)
+                    {
+                        return true;
+                    }
+                    if (computerMap[numberCoordinate + 1] != "SB")
+                    {
+                        directions.Add(1);
+                    }
+                    if (computerMap[numberCoordinate - 1] != "SB")
+                    {
+                        directions.Add(-1);
+                    }
+                    if (computerMap[numberCoordinate + 10] != "SB")
+                    {
+                        directions.Add(10);
+                    }
+                    if (computerMap[numberCoordinate - 10] != "SB")
+                    {
+                        directions.Add(-10);
+                    }
+                }
+            }
+            else
+            {
+                int countNoShoot = 0;
+                if (IsTrueShoot(numberCoordinatesWhichWarning, 1, 1) == false)
+                {
+                    countNoShoot++;
+                }
+                else
+                {
+                    directions.Add(1);
+                }
+                if (IsTrueShoot(numberCoordinatesWhichWarning, 1, 10) == false)
+                {
+                    countNoShoot++;
+                }
+                else
+                {
+                    directions.Add(10);
+                }
+                if (IsTrueShoot(numberCoordinatesWhichWarning, 1, -10) == false)
+                {
+                    countNoShoot++;
+                }
+                else
+                {
+                    directions.Add(-10);
+                }
+                if (IsTrueShoot(numberCoordinatesWhichWarning, 1, -1) == false)
+                {
+                    countNoShoot++;
+                }
+                else
+                {
+                    directions.Add(-1);
+                }
+                if (countNoShoot == 4)
+                {
+                    return false;
+                }
+
+            }
+            int j;
+            int counterOfGoodShoot;
+            for (int i = 0; i < directions.Count; i++)
+            {
+                j = 2;
+                counterOfGoodShoot = 0;
+                while (j <= counter)
+                {
+                    numberCoordinate += directions[i];
+                    numberCoordinatesWhichWarning = GetNumberCoordinatesWhichWarning();
+                    if (IsTrueShoot(numberCoordinatesWhichWarning, 1, directions[i]) == true)
+                    {
+                        counterOfGoodShoot++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    j++;
+                }
+                if (counterOfGoodShoot == counter - 1)
+                {
+                    numberCoordinate = saveNumberCoordinate;
+                    return true;
+                }
+                numberCoordinate = saveNumberCoordinate;
+            }
+            return false;
+        }
+
         public void StopKill()
         {
             foreach(var oneCoordinateShip in coordinatesKillShips)
@@ -901,7 +1065,7 @@ namespace SeaBattle
             }
         }
 
-        public string getMessage(string resultShot)
+        public string GetMessage(string resultShot)
         {
             List<string> messagesThematics = new List<string> ();
             ICollection keys = computerMessages.Keys;
@@ -914,6 +1078,108 @@ namespace SeaBattle
             }
             int indexOnList = randomize.Next(0, messagesThematics.Count);
             return messagesThematics[indexOnList];
+        }
+
+        public int GetNumberCoordinatesWhichWarning(int term = 0)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (i == 0 || i == 1 || i == 2 || i == 3)
+                {
+                    if (numbersCoordinatesWhichWarning[i][i - i] == numberCoordinate)
+                    {
+                        return i;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if (numbersCoordinatesWhichWarning[i][j] == numberCoordinate)
+                        {
+                            return i;
+                        }
+                    }
+                }
+            }
+            return 9;
+        }
+
+        public bool IsTrueShoot(int number, int factor, int directionThink)
+        {
+            if (directionThink == 1)
+            {
+                if (number == 0 || number == 2 || number == 4 || number == 6 || number == 7 || number == 9)
+                {
+                    if (computerMap[numberCoordinate + 1 * factor] != "SB")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (directionThink == 10)
+            {
+                if (number == 0 || number == 1 || number == 4 || number == 5 || number == 7 || number == 9)
+                {
+                    if (computerMap[numberCoordinate + 10 * factor] != "SB")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (directionThink == -10)
+            {
+                
+                if (number == 2 || number == 3 || number == 5 || number == 6 || number == 7 || number == 9)
+                {
+                    if (computerMap[numberCoordinate - 10 * factor] != "SB")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (number == 1 || number == 3 || number == 4 || number == 5 || number == 6 || number == 9)
+                {
+                    if (computerMap[numberCoordinate - 1 * factor] != "SB")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
     }
 }

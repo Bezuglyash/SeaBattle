@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные с этой сборкой.
-[assembly: AssemblyTitle("Морской бой")]
+[assembly: AssemblyTitle("Sea Battle")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Морской бой")]
-[assembly: AssemblyCopyright("MAXon28 ©  2019")]
+[assembly: AssemblyCompany("28MAXon")]
+[assembly: AssemblyProduct("Sea Battle")]
+[assembly: AssemblyCopyright("28MAXon ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

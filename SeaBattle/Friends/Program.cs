@@ -13,24 +13,38 @@ namespace SeaBattle
             Console.ForegroundColor = ConsoleColor.Black;
             Console.Clear();
             ConsoleInterface WorkConsole = new ConsoleInterface();
-            WorkConsole.Get_start();
-            int choice = 0;
-            while (true)
+            int accountResult = 0;
+            do
             {
-                WorkConsole.Set_cursor(38, 9);
-                var input = Console.ReadLine();
-                if (int.TryParse(input, out choice))
+                WorkConsole.Get_start();
+                int choice = 0;
+                while (true)
                 {
-                    if (choice > 0 && choice <= 3)
+                    WorkConsole.Set_cursor(38, 9);
+                    var input = Console.ReadLine();
+                    if (int.TryParse(input, out choice))
                     {
-                        break;
+                        if (choice > 0 && choice <= 3)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            WorkConsole.Set_cursor(1, 40);
+                            Console.WriteLine("                                        ");
+                            WorkConsole.Set_cursor(1, 40);
+                            WorkConsole.WriteWarningOrError("Только цифры от 1 до 3!", "Error");
+                            for (int i = 0; i < input.Length; i++)
+                            {
+                                WorkConsole.Set_cursor(38 + i, 9);
+                                Console.WriteLine(" ");
+                            }
+                        }
                     }
                     else
                     {
                         WorkConsole.Set_cursor(1, 40);
-                        Console.WriteLine("                                        ");
-                        WorkConsole.Set_cursor(1, 40);
-                        WorkConsole.WriteWarningOrError("Только цифры от 1 до 3!", "Error");
+                        WorkConsole.WriteWarningOrError("Неправильный формат ввода!", "Error");
                         for (int i = 0; i < input.Length; i++)
                         {
                             WorkConsole.Set_cursor(38 + i, 9);
@@ -38,20 +52,9 @@ namespace SeaBattle
                         }
                     }
                 }
-                else
-                {
-                    WorkConsole.Set_cursor(1, 40);
-                    WorkConsole.WriteWarningOrError("Неправильный формат ввода!", "Error");
-                    for (int i = 0; i < input.Length; i++)
-                    {
-                        WorkConsole.Set_cursor(38 + i, 9);
-                        Console.WriteLine(" ");
-                    }
-                }
-            }
-            var gameSpace = new GameSpace();
-            gameSpace.Get_start(choice);
-            Console.ReadLine();
+                var gameSpace = new GameSpace();
+                gameSpace.Get_start(choice, ref accountResult);
+            } while (accountResult == 0);
         }
     }
 }

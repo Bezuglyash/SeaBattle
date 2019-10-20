@@ -28,7 +28,7 @@ namespace SeaBattle
                 "А7", "Б7", "В7", "Г7", "Д7", "Е7", "Ж7", "З7", "И7", "К7",
                 "А8", "Б8", "В8", "Г8", "Д8", "Е8", "Ж8", "З8", "И8", "К8",
                 "А9", "Б9", "В9", "Г9", "Д9", "Е9", "Ж9", "З9", "И9", "К9",
-                "А10", "Б10", "В10", "Г10", "Д10", "Е10", "Ж10", "310", "И10", "К10"
+                "А10", "Б10", "В10", "Г10", "Д10", "Е10", "Ж10", "З10", "И10", "К10"
             };
             playerNumberCoordinates = new List<int>
             {
@@ -77,6 +77,8 @@ namespace SeaBattle
                     playerInterface.Set_cursor(12 + i, 7);
                     Console.WriteLine(" ");
                 }
+                playerInterface.Set_cursor(1, 40);
+                Console.WriteLine("                                                                ");
                 playerInterface.Set_cursor(12, 7);
                 variantInMiniGame = Console.ReadLine();
             }
